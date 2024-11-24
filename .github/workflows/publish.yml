@@ -1,35 +1,38 @@
-name: Publish to npm
+name: Publish to GitHub Packages
 
 on:
   push:
-    branches: [main] # Trigger workflow on push to the main branch
+    branches: [main]
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      packages: write
 
     steps:
-      # Step 1: Checkout the repository
+      # Step 1: Checkout repository
       - uses: actions/checkout@v4
 
-      # Step 2: Setup Node.js and npm
+      # Step 2: Setup Node.js
       - uses: actions/setup-node@v3
         with:
-          node-version: '22.x' # Use your preferred Node.js version
-          registry-url: 'https://registry.npmjs.org'
+          node-version: '20.x'
+          registry-url: 'https://npm.pkg.github.com'
 
-      # Step 3: Authenticate with npm
-      - run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+      # Step 3: Authenticate with GitHub Packages
+      - run: |
+          echo @ahmed259:registry=https://npm.pkg.github.com/ > ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
 
       # Step 4: Install dependencies
       - run: npm install
 
-      # Step 5: Build the package (if applicable)
+      # Step 5: Build the package (optional)
       - run: npm run build
 
-      # Step 6: Publish the package to npm
+      # Step 6: Publish the package to GitHub Packages
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

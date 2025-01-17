@@ -30,6 +30,10 @@ export const winstonLogger = (
         node: elasticsearchNode,
         maxRetries: 2,
         requestTimeout: 10000,
+        auth: {
+          username: 'elastic',
+          password: 'admin',
+        },
       },
     },
   };
